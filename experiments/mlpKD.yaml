@@ -1,14 +1,16 @@
 model: MLP
-d_input: 4
-d_ff: 512
-d_output: 2 
-depth: 3
-dropout: 0.
-max_epochs: 100
-batch_size: 64
-lr: 0.0002
-warmup: 1000
-patience: 10
-factor: 0.7
-lambda: 0.7
-T: 1
+# --- Student Model Specs (Matches your request) ---
+d_ff: 512          # Hidden layer width
+depth: 3           # 3 Layers total
+d_input: 5         # Keep default (matches preprocess inputs)
+dropout: 0.2       # Standard dropout
+
+# --- Teacher Specs ---
+teacher_checkpoint: "/home/jay_agarwal_2022/lorentz-gatr/runs/topt/GATr_7327/models/model_run0_it169999.pt" 
+# ^^^ IMPORTANT: Update this path to where your .pt file actually is!
+
+# --- Distillation Hyperparams ---
+T: 4.0             # Temperature (softens the distribution)
+lambda: 0.5        # Balance between Hard Loss and Soft Loss (0.5 is standard)
+batch_size: 128    # Ensure this matches what your GPU can handle with LGATr
+lr: 0.001

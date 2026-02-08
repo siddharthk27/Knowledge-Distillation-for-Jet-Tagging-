@@ -12,6 +12,7 @@ import pandas as pd
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Local imports
+from .lgatr_wrapper import LGATrWrapper
 from ..knowledge_distillation_base import KnowledgeDistillationBase
 from .lorentz_net import LorentzNetWrapper
 
@@ -28,10 +29,17 @@ class MLPKD(KnowledgeDistillationBase):
         
     def get_teacher(self, hparams):
         """
-        return a torch.nn.Module model that is the student model. The forward()
-        function should return logits and penultimate layer representation
+        Initializes the LGATr teacher using the checkpoint defined in config.
         """
-        model = LorentzNetWrapper()
+        # Get path from the yaml config
+        ckpt_path = hparams.get("teacher_checkpoint")
+        if not ckpt_path:
+            raise ValueError("Error: 'teacher_checkpoint' is missing in your yaml config!")
+
+        print(f"Loading Teacher from: {ckpt_path}")
+        model = LGATrWrapper(checkpoint_path=ckpt_path)
+
+        # Freeze the teacher
         for param in model.parameters():
             param.requires_grad = False
         return model
