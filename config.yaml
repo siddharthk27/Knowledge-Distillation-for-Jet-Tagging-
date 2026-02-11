@@ -1,0 +1,135 @@
+model:
+  net:
+    attention:
+      multi_query: false
+      in_mv_channels: null
+      out_mv_channels: null
+      in_s_channels: null
+      out_s_channels: null
+      num_heads: 8
+      additional_qk_mv_channels: 0
+      additional_qk_s_channels: 0
+      pos_encoding: false
+      pos_encoding_base: 4096
+      output_init: default
+      checkpoint: true
+      increase_hidden_channels: 2
+      dropout_prob: null
+      head_scale: true
+    mlp:
+      mv_channels: null
+      s_channels: null
+      activation: gelu
+      dropout_prob: null
+    _target_: gatr.nets.GATr
+    in_mv_channels: 1
+    out_mv_channels: 1
+    hidden_mv_channels: 16
+    in_s_channels: 0
+    out_s_channels: null
+    hidden_s_channels: 32
+    num_blocks: 12
+    reinsert_mv_channels: null
+    reinsert_s_channels: null
+    dropout_prob: null
+    double_layernorm: false
+  _target_: experiments.tagging.wrappers.TaggingGATrWrapper
+  force_xformers: ${training.force_xformers}
+  mean_aggregation: false
+exp_name: topt
+exp_type: toptagging
+run_name: GATr_7327
+base_dir: .
+jobid: null
+seed: null
+debug: false
+warm_start_idx: 0
+save: true
+use_mlflow: true
+save_source: true
+ema: false
+ga_settings:
+  use_fully_connected_subgroup: true
+  use_geometric_product: true
+  mix_mvpseudoscalar_into_scalar: true
+  zero_bivector: false
+train: true
+training:
+  iterations: 200000
+  train_test_val:
+  - 0.4
+  - 0.5
+  - 0.1
+  subsample: null
+  es_patience: 100
+  es_load_best_model: true
+  validate_every_n_steps: 5000
+  clip_grad_norm: 5
+  clip_grad_value: null
+  max_grad_norm: null
+  log_every_n_steps: 1000
+  optimizer: Lion
+  lr: 0.0003
+  batchsize: 128
+  betas:
+  - 0.9
+  - 0.999
+  eps: 1.0e-08
+  weight_decay: 0.2
+  scheduler: CosineAnnealingLR
+  scheduler_scale: 1
+  cosanneal_eta_min: 0
+  reduceplateau_factor: 0.1
+  reduceplateau_patience: 50
+  onecycle_max_lr: 10
+  onecycle_pct_start: 0.3
+  ema_decay: 0.99
+  dtype: float32
+  enable_flash_sdp: false
+  enable_math_sdp: true
+  enable_mem_efficient_sdp: false
+  force_xformers: true
+evaluate: true
+evaluation:
+  batchsize: 128
+  save_roc: false
+  eval_set:
+  - test
+plot: true
+plotting:
+  loss: true
+  roc: true
+  score: true
+mlflow:
+  db: ${base_dir}/runs/${exp_name}/mlflow/mlflow.db
+  artifacts: ${base_dir}/runs/${exp_name}/mlflow/artifacts
+data:
+  beam_reference: xyplane
+  two_beams: true
+  beam_token: true
+  add_time_reference: true
+  add_xzplane: false
+  add_yzplane: false
+  add_scalar_features: false
+  reinsert_channels: false
+  rescale_data: true
+  scalar_features_preprocessing:
+  - - 1.7
+    - 0.7
+  - - 2.0
+    - 0.7
+  - - -4.7
+    - 0.7
+  - - -4.7
+    - 0.7
+  - - 0
+    - 1
+  - - 0
+    - 1
+  - - 0.2
+    - 4
+  data_dir: data/
+  dataset: full
+  num_global_tokens: 1
+run_idx: 0
+run_dir: ./runs/topt/GATr_7327
